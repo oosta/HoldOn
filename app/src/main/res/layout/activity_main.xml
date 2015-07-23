@@ -14,7 +14,9 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:height="150dp"
-        android:width="250dp" />
+        android:width="250dp"
+        android:focusableInTouchMode="false"
+        android:textSize="20dp"/>
 
     <TextSwitcher
         android:layout_width="wrap_content"
@@ -28,7 +30,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/scoreEditText"
-        android:layout_below="@+id/button_hold"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="37dp" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="10dp"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bestScoreEditText"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="10dp"/>
 </RelativeLayout>

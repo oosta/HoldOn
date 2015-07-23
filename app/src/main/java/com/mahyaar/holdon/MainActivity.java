@@ -2,6 +2,7 @@ package com.mahyaar.holdon;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -21,12 +22,16 @@ public class MainActivity extends Activity {
 
     private static final int maxSeed = 5;
     private static final int minSeed = 3;
+    public static final String My_PREFS = "MY_PREFS";
+    private int seedIncrement = 1;
+    private int accuracy;
     private TextSwitcher messageSwitch;
     private Button holdButton;
     private int holdTime;
     private EditText scoreEditText;
-    int seedIncrement = 1;
+    private EditText bestScoreEditText;
     private int score;
+    private int bestScore;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -39,6 +44,10 @@ public class MainActivity extends Activity {
         holdButton = (Button) findViewById(R.id.button_hold);
         scoreEditText = (EditText) findViewById(R.id.scoreEditText);
         scoreEditText.setText("Current score: " + String.valueOf(score));
+        bestScoreEditText = (EditText) findViewById(R.id.bestScoreEditText);
+
+        bestScoreEditText.setText("Current best score: " + String.valueOf(getBestScore()));
+
 
         holdButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -52,7 +61,7 @@ public class MainActivity extends Activity {
                     long timeUp = event.getEventTime();
                     long duration = timeUp - timeDown;
 
-                    if (duration >= holdTime * 1000 - 20000  && duration <= holdTime * 1000 + 20000) {
+                    if (duration >= holdTime * 1000 - 20000 && duration <= holdTime * 1000 + 20000) {
                         increaseScore(seedIncrement * 10);
                         messageSwitch.setText("Good job! now " + holdMessage(maxSeed + seedIncrement, minSeed + seedIncrement));
                         scoreEditText.setText("Current score: " + String.valueOf(score));
@@ -60,8 +69,14 @@ public class MainActivity extends Activity {
                         holdButton.setText("Press and Hold");
                         holdButton.setTypeface(null, Typeface.BOLD);
                         seedIncrement++;
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestScoreEditText.setText("Best score: " + String.valueOf(bestScore));
+
+                        }
                     } else {
                         messageSwitch.setText("You lost! Try again!");
+                        saveBestScore();
                         resetScore();
                         Intent intent = getIntent();
                         finish();
@@ -69,6 +84,7 @@ public class MainActivity extends Activity {
                     }
 
                 }
+
                 return true;
             }
         });
@@ -98,5 +114,24 @@ public class MainActivity extends Activity {
 
     private void resetScore(){
         score = 0;
+    }
+
+    private int getBestScore(){
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(My_PREFS, 0);
+        bestScore = preferences.getInt("BestScore", bestScore);
+        return bestScore;
+
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        saveBestScore();
+    }
+
+    private void saveBestScore() {
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(My_PREFS, 0);
+        SharedPreferences.Editor editor = preferences. edit();
+        editor.putInt("BestScore", bestScore);
+        editor.commit();
     }
 }
