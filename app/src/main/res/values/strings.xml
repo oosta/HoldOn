@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">HoldOn</string>
+    <string name="action_settings">Options</string>
+    <string name="button_hold">Press and Hold</string>
+</resources>
