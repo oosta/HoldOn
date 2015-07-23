@@ -1,12 +1,15 @@
 package com.mahyaar.holdon;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
@@ -16,28 +19,26 @@ import java.util.Random;
 
 public class MainActivity extends Activity {
 
-    private static final String TAG = "Mahyar";
+    private static final int maxSeed = 5;
+    private static final int minSeed = 3;
     private TextSwitcher messageSwitch;
     private Button holdButton;
     private int holdTime;
+    private EditText scoreEditText;
+    int seedIncrement = 1;
     private int score;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         messageSwitch = (TextSwitcher) findViewById(R.id.messageSwitcher);
         messageSwitch.setFactory(myFactory);
-        messageSwitch.setCurrentText(holdMessage(5, 3));
+        messageSwitch.setCurrentText(holdMessage(maxSeed, minSeed));
         holdButton = (Button) findViewById(R.id.button_hold);
-
-//        holdButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                messageSwitch.setText("You lost! You did not hold for " + String.valueOf(holdTime));
-//            }
-//        });
+        scoreEditText = (EditText) findViewById(R.id.scoreEditText);
+        scoreEditText.setText("Current score: " + String.valueOf(score));
 
         holdButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -51,11 +52,20 @@ public class MainActivity extends Activity {
                     long timeUp = event.getEventTime();
                     long duration = timeUp - timeDown;
 
-                    if (holdTime * 1000 - 500 <= duration && duration <= holdTime * 1000 + 500) {
-                        score = +1;
-                        messageSwitch.setText("Good job! now " + holdMessage(5 + score, 3 + score));
+                    if (duration >= holdTime * 1000 - 20000  && duration <= holdTime * 1000 + 20000) {
+                        increaseScore(seedIncrement * 10);
+                        messageSwitch.setText("Good job! now " + holdMessage(maxSeed + seedIncrement, minSeed + seedIncrement));
+                        scoreEditText.setText("Current score: " + String.valueOf(score));
+                        holdButton.setBackgroundColor(Color.GREEN);
+                        holdButton.setText("Press and Hold");
+                        holdButton.setTypeface(null, Typeface.BOLD);
+                        seedIncrement++;
                     } else {
                         messageSwitch.setText("You lost! Try again!");
+                        resetScore();
+                        Intent intent = getIntent();
+                        finish();
+                        startActivity(intent);
                     }
 
                 }
@@ -81,4 +91,12 @@ public class MainActivity extends Activity {
             return myText;
         }
     };
+
+    private void increaseScore(int a){
+        score += a;
+    }
+
+    private void resetScore(){
+        score = 0;
+    }
 }
