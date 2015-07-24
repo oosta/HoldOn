@@ -6,11 +6,11 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
@@ -24,12 +24,12 @@ public class MainActivity extends Activity {
     private static final int minSeed = 3;
     public static final String My_PREFS = "MY_PREFS";
     private int seedIncrement = 1;
-    private int accuracy;
     private TextSwitcher messageSwitch;
     private Button holdButton;
     private int holdTime;
-    private EditText scoreEditText;
-    private EditText bestScoreEditText;
+    private TextView scoreEditText;
+    private TextView bestScoreEditText;
+    private int accuracyMiliSeconds = 2000;
     private int score;
     private int bestScore;
 
@@ -42,9 +42,9 @@ public class MainActivity extends Activity {
         messageSwitch.setFactory(myFactory);
         messageSwitch.setCurrentText(holdMessage(maxSeed, minSeed));
         holdButton = (Button) findViewById(R.id.button_hold);
-        scoreEditText = (EditText) findViewById(R.id.scoreEditText);
+        scoreEditText = (TextView) findViewById(R.id.scoreEditText);
         scoreEditText.setText("Current score: " + String.valueOf(score));
-        bestScoreEditText = (EditText) findViewById(R.id.bestScoreEditText);
+        bestScoreEditText = (TextView) findViewById(R.id.bestScoreEditText);
 
         bestScoreEditText.setText("Current best score: " + String.valueOf(getBestScore()));
 
@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
                     long timeUp = event.getEventTime();
                     long duration = timeUp - timeDown;
 
-                    if (duration >= holdTime * 1000 - 20000 && duration <= holdTime * 1000 + 20000) {
+                    if (duration >= holdTime * 1000 - accuracyMiliSeconds && duration <= holdTime * 1000 + accuracyMiliSeconds) {
                         increaseScore(seedIncrement * 10);
                         messageSwitch.setText("Good job! now " + holdMessage(maxSeed + seedIncrement, minSeed + seedIncrement));
                         scoreEditText.setText("Current score: " + String.valueOf(score));
@@ -78,9 +78,19 @@ public class MainActivity extends Activity {
                         messageSwitch.setText("You lost! Try again!");
                         saveBestScore();
                         resetScore();
-                        Intent intent = getIntent();
-                        finish();
-                        startActivity(intent);
+
+                        //This is how we wait for 2.5 seconds before rerunning the onCreate()
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                //This is the trick to restart the onCreate() method.
+                                Intent intent = getIntent();
+                                finish();
+                                startActivity(intent);
+                            }
+                        }, 2500);
+
                     }
 
                 }
