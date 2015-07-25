@@ -2,4 +2,9 @@
     <string name="app_name">HoldOn</string>
     <string name="action_settings">Options</string>
     <string name="button_hold">Press and Hold</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="tv_GameMenu">Game Menu</string>
 </resources>

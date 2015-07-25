@@ -18,7 +18,7 @@ import android.widget.ViewSwitcher.ViewFactory;
 import java.util.Random;
 
 
-public class MainActivity extends Activity {
+public class HoldOn extends Activity {
 
     private static final int maxSeed = 5;
     private static final int minSeed = 3;
@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.holdon);
 
         messageSwitch = (TextSwitcher) findViewById(R.id.messageSwitcher);
         messageSwitch.setFactory(myFactory);
@@ -111,9 +111,9 @@ public class MainActivity extends Activity {
     private ViewFactory myFactory = new ViewFactory() {
         @Override
         public View makeView() {
-            TextView myText = new TextView(MainActivity.this);
+            TextView myText = new TextView(HoldOn.this);
             myText.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
-            myText.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_DeviceDefault_Small);
+            myText.setTextAppearance(HoldOn.this, android.R.style.TextAppearance_DeviceDefault_Small);
             return myText;
         }
     };
